@@ -38,3 +38,9 @@ map Views toe aan het project. Maak in de Views map een Index.html bestand aan.
 Vanaf nu zou je automatisch het Index.html bestand moeten zien zodra je het 
 project start.
 
+## Statische content toevoegen
+
+Maak hiervoor een Content map aan. NancyFX zal automatisch alle bestanden
+in deze map delen via de /content/ url. In dit project heb ik bijvoorbeeld
+een site.css aangemaakt die gebruikt wordt door Index.html.
+
