@@ -1,4 +1,5 @@
 ﻿using Nancy;
+using NancyFxTutorial.Web.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,8 @@ namespace NancyFxTutorial.Web.Modules
     public TijdModule()
     {
       Get["/tijd"] = _ => DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
+
+      this.PreventCaching();
     }
   }
 }
