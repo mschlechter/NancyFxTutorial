@@ -44,3 +44,25 @@ Maak hiervoor een Content map aan. NancyFX zal automatisch alle bestanden
 in deze map delen via de /content/ url. In dit project heb ik bijvoorbeeld
 een site.css aangemaakt die gebruikt wordt door Index.html.
 
+## Het voorkomen van browser caching
+
+Een vervelend probleem dat zich voor kan doen wanneer je met een JavaScript
+framework een API aanroept, is dat het antwoord door de browser in de cache
+wordt bewaard.
+
+Hierdoor krijg je vaak oude antwoorden te zien.
+
+De mooiste manier om voor een bepaalde module caching te voorkomen, is
+volgens de makers van NancyFX het gebruiken van extension methods. In dit
+voorbeeld project heb ik een map Extensions aangemaakt, met daarin een
+bestand ModuleExtensions.cs.
+
+Hierin heb ik een PreventCaching() functie gemaakt die een After hook van
+NancyFX gebruikt om de cache control headers toe te voegen.
+
+Het voordeel hiervan is dat ik nu in elke willekeurige NancyModule simpelweg
+this.PreventCaching() kan aanroepen.
+
+Je kunt hiervan een voorbeeld zien in het TijdModule.cs bestand. De werking
+hiervan kun je zien door de tijd te verversen wanneer je naar onze testpagina
+(Index.html) gaat.
