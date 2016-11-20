@@ -25,3 +25,16 @@ project.
 Zodra je nu het project uitvoert, zul je op de /hallo url een "Hallo wereld"
 melding moeten zien.
 
+## Een eenvoudige view maken voor HTML
+
+Om van ons testproject een basis website te maken, is het handig om een Index.html
+te delen waarmee we dingen kunnen testen.
+
+Hiervoor kun je in NancyFX een view maken.
+
+Maak hiervoor het IndexModule.cs bestand aan (zie voorbeeld). Voeg daarnaast een
+map Views toe aan het project. Maak in de Views map een Index.html bestand aan.
+
+Vanaf nu zou je automatisch het Index.html bestand moeten zien zodra je het 
+project start.
+
