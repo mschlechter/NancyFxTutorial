@@ -74,7 +74,10 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\angular.js" />
+    <Content Include="Content\app.js" />
     <Content Include="Content\site.css" />
+    <Content Include="Content\tijdController.js" />
     <Content Include="Views\Index.html" />
     <Content Include="packages.config" />
     <None Include="Web.Debug.config">
@@ -90,6 +93,7 @@
   <ItemGroup>
     <Compile Include="Modules\HalloModule.cs" />
     <Compile Include="Modules\IndexModule.cs" />
+    <Compile Include="Modules\TijdModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

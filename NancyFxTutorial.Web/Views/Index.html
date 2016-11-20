@@ -1,8 +1,20 @@
-﻿<html>
+﻿<html ng-app="tutorialApp">
 <head>
   <link href="/Content/site.css" rel="stylesheet" />
+  <script src="/Content/angular.js"></script>
+  <script src="/Content/app.js"></script>
+  <script src="/Content/tijdController.js"></script>
 </head>
 <body>
   <h1>NancyFX tutorial</h1>
+
+  <div ng-controller="tijdController">
+    <span ng-hide="tijd">De tijd wordt opgehaald.</span>
+    <span ng-show="tijd">De huidige datum en tijd is : {{tijd}}</span>
+    <div>
+      <button ng-click="vernieuwen()">Vernieuw tijd</button>
+    </div>
+  </div>
+
 </body>
 </html>
