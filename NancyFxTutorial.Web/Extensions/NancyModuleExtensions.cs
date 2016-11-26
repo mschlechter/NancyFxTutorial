@@ -6,7 +6,7 @@ using System.Web;
 
 namespace NancyFxTutorial.Web.Extensions
 {
-  public static class ModuleExtensions
+  public static partial class NancyModuleExtensions
   {
     public static void PreventCaching(this NancyModule module)
     {
