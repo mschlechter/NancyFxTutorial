@@ -3,6 +3,9 @@
 In deze tutorial beschrijf ik hoe je eenvoudig een NancyFX project kunt starten.
 Daarnaast wil ik ingaan op wat geavanceerdere onderwerpen.
 
+Inhoudsopgave:
+1. Een NancyFX project aanmaken(#een-nancyfx-project-aanmaken)
+
 ## Een NancyFX project aanmaken
 
 De eenvoudigste manier om met NancyFX te beginnen is door een leeg ASP.NET project
