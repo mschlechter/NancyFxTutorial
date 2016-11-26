@@ -4,11 +4,12 @@ In deze tutorial beschrijf ik hoe je eenvoudig een NancyFX project kunt starten.
 Daarnaast wil ik ingaan op wat geavanceerdere onderwerpen.
 
 Inhoudsopgave:
-  1. [Een NancyFX project aanmaken](#een-nancyfx-project-aanmaken)
-  2. [Een NancyFX module maken](#een-nancyfx-module-maken)
-  3. [Een eenvoudige view maken voor HTML](#een-eenvoudige-view-maken-voor-html)
-  4. [Statische content toevoegen](#statische-content-toevoegen)
-  5. [Het voorkomen van browser caching](#het-voorkomen-van-browser-caching)
+  1. [Een NancyFX project aanmaken](#1-een-nancyfx-project-aanmaken)
+  2. [Een NancyFX module maken](#2-een-nancyfx-module-maken)
+  3. [Een eenvoudige view maken voor HTML](#3-een-eenvoudige-view-maken-voor-html)
+  4. [Statische content toevoegen](#4-statische-content-toevoegen)
+  5. [Het voorkomen van browser caching](#5-het-voorkomen-van-browser-caching)
+  6. [Token authentication inbouwen](#6-token-authentication-inbouwen)
 
 ## 1. Een NancyFX project aanmaken
 
@@ -73,3 +74,27 @@ this.PreventCaching() kan aanroepen.
 Je kunt hiervan een voorbeeld zien in het TijdModule.cs bestand. De werking
 hiervan kun je zien door de tijd te verversen wanneer je naar onze testpagina
 (Index.html) gaat.
+
+## 6. Token authentication inbouwen
+
+Hiervoor heb je de volgende libraries nodig:
+
+Microsoft.IdentityModel.Tokens (NuGet package)
+System.IdentityModel.Tokens.Jwt (NuGet package)
+
+**Let op:**
+Sinds versie 5.0 heeft System.IdentityModel.Tokens.Jwt als dependency
+Microsoft.IdentityModel.Tokens en dus niet meer de System.IdentityModel.Tokens 
+library.
+
+In de WebTokenFunctions class heb ik de volgende functies gemaakt:
+
+public static string CreateToken(ClaimsIdentity claimsIdentity, string issuerName, string secret)
+public static ClaimsPrincipal ValidateToken(string token, string issuerName, string secret)
+
+Het idee is dat we een JSON Web Token maken op basis van bepaalde claims en een secret
+signing key. De secret key zorgt ervoor dat er maar 1 instantie is die de tokens kan maken
+en valideren.
+
+De claims zijn eigenschappen van onze identiteit. We zeggen in feite "wij zijn gebruiker X".
+
