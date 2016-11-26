@@ -4,7 +4,8 @@ In deze tutorial beschrijf ik hoe je eenvoudig een NancyFX project kunt starten.
 Daarnaast wil ik ingaan op wat geavanceerdere onderwerpen.
 
 Inhoudsopgave:
-1. Een NancyFX project aanmaken(#een-nancyfx-project-aanmaken)
+1. [Een NancyFX project aanmaken](#een-nancyfx-project-aanmaken)
+2. [Een NancyFX module maken](#een-nancyfx-module-maken)
 
 ## Een NancyFX project aanmaken
 
