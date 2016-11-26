@@ -16,5 +16,17 @@ namespace NancyFxTutorial.Web.Extensions
         ctx.Response.Headers.Add("Pragma", "no-cache");
       };
     }
+
+    public static void ValidateToken(this NancyModule module)
+    {
+      // Lees dit eens goed...
+    // http://bytefish.de/blog/token_authentication_owin_nancy/#implementing-token-authentication-with-nancy-and-owin
+
+
+      //module.Before += (NancyContext ctx) =>
+      //{
+      //  var x = ctx.CurrentUser;
+      //};
+    }
   }
 }
