@@ -108,6 +108,7 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\AppUtils.cs" />
     <Compile Include="Core\AuthLogon.cs" />
     <Compile Include="Core\AuthRequest.cs" />
     <Compile Include="Core\AuthValidator.cs" />

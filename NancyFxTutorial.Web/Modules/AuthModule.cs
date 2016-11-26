@@ -10,9 +10,6 @@ namespace NancyFxTutorial.Web.Modules
 {
   public class AuthModule : NancyModule
   {
-    // Deze kun je genereren met de WebTokenFunctions.CreateSecret functie
-    private string SECRET = "+a8tTwAuErCTfvPYtGeaS/dMJmxx9IlbmlOt8QnHAqY=";
-
     public AuthModule()
     {
       Post["/auth/token"] = _ =>
@@ -29,7 +26,7 @@ namespace NancyFxTutorial.Web.Modules
         }
 
         var identity = WebTokenFunctions.CreateClaimIdentity(logon.ID.ToString(), logon.Naam, "Gebruiker");
-        var token = WebTokenFunctions.CreateToken(identity, "NancyFxTutorial", SECRET);
+        var token = WebTokenFunctions.CreateToken(identity, AppUtils.Issuer, AppUtils.SecretApiKey);
 
         return token;
       };

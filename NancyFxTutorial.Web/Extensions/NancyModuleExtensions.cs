@@ -1,4 +1,5 @@
 ﻿using Nancy;
+using NancyFxTutorial.Web.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,23 +24,35 @@ namespace NancyFxTutorial.Web.Extensions
       // http://bytefish.de/blog/token_authentication_owin_nancy/#implementing-token-authentication-with-nancy-and-owin
 
 
-      module.Before += (NancyContext ctx) =>
-      {
-        // Haal token uit de request headers
+      //module.Before += (NancyContext ctx) =>
+      //{
 
+      //};
 
-        var ok = true;
-
-        if (!ok)
-        {
-          return new Response
-          {
-            StatusCode = HttpStatusCode.Unauthorized
-          };
-        }
-
-        return null;
-      };
+      module.Before += BeforeResponse;
     }
+
+    static Response BeforeResponse(NancyContext ctx)
+    {
+      var validRequest = true;
+
+      // Haal token uit de request headers
+      var bearerToken = ctx.Request.Headers["Bearer"].SingleOrDefault();
+      var principal = WebTokenFunctions.ValidateToken(bearerToken, AppUtils.Issuer, AppUtils.SecretApiKey);
+
+
+      var ok = true;
+
+      if (!ok)
+      {
+        return new Response
+        {
+          StatusCode = HttpStatusCode.Unauthorized
+        };
+      }
+
+      return null;
+    }
+
   }
 }
