@@ -21,4 +21,26 @@
 
   };
 
+  $scope.testToken = function () {
+    $scope.melding = null;
+
+    var config = {
+      headers: {
+        'Authorization': 'Bearer ' + $scope.token,
+        'Accept': 'application/json'
+      }
+    };
+
+    $http.get("/secure/hallo", config).then(function (response) {
+      $scope.melding = response.data;
+    }, function (response) {
+      if (response.status === 401) {
+        $scope.melding = response.statusText;
+      }
+    });
+
+  };
+
+
+
 });

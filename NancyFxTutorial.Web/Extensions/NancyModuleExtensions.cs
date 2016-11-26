@@ -3,6 +3,7 @@ using NancyFxTutorial.Web.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Web;
 
 namespace NancyFxTutorial.Web.Extensions
@@ -35,23 +36,37 @@ namespace NancyFxTutorial.Web.Extensions
     static Response BeforeResponse(NancyContext ctx)
     {
       var validRequest = true;
+      string bearerToken = "";
 
       // Haal token uit de request headers
-      var bearerToken = ctx.Request.Headers["Bearer"].SingleOrDefault();
-      var principal = WebTokenFunctions.ValidateToken(bearerToken, AppUtils.Issuer, AppUtils.SecretApiKey);
+      var authHeader = ctx.Request.Headers.Authorization;
+      if (authHeader?.Length > 7) bearerToken = authHeader.Substring(7);
 
 
-      var ok = true;
-
-      if (!ok)
+      if (!string.IsNullOrEmpty(bearerToken))
       {
-        return new Response
+        var principal = WebTokenFunctions.ValidateToken(bearerToken, AppUtils.Issuer, AppUtils.SecretApiKey);
+
+        var userId = principal.Claims
+          .Where(c => c.Type == ClaimTypes.NameIdentifier)
+          .Select(c => c.Value).SingleOrDefault();
+
+        if (!string.IsNullOrEmpty(userId))
         {
-          StatusCode = HttpStatusCode.Unauthorized
-        };
+          // Laat de response door
+          return null;
+
+        }
+
       }
 
-      return null;
+
+
+      return new Response
+      {
+        StatusCode = HttpStatusCode.Unauthorized
+      };
+
     }
 
   }
