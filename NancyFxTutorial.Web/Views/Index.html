@@ -4,9 +4,12 @@
   <script src="/Content/angular.js"></script>
   <script src="/Content/app.js"></script>
   <script src="/Content/tijdController.js"></script>
+  <script src="/Content/tokenTestController.js"></script>
 </head>
 <body>
   <h1>NancyFX tutorial</h1>
+
+  <h2>PreventCaching test</h2>
 
   <div ng-controller="tijdController">
     <span ng-hide="tijd">De tijd wordt opgehaald.</span>
@@ -15,6 +18,18 @@
       <button ng-click="vernieuwen()">Vernieuw tijd</button>
     </div>
   </div>
+
+  <h2>JSON Web Token test</h2>
+
+  <div ng-controller="tokenTestController">
+
+    <label>Naam : <input type="text" ng-model="authRequest.naam" /></label>
+    <label>Wachtwoord : <input type="password" ng-model="authRequest.wachtwoord" /></label>
+
+    <button ng-click="getToken()">Aanmelden</button>
+
+  </div>
+
 
 </body>
 </html>

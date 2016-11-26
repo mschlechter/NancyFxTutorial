@@ -94,6 +94,7 @@
     <Content Include="Content\app.js" />
     <Content Include="Content\site.css" />
     <Content Include="Content\tijdController.js" />
+    <Content Include="Content\tokenTestController.js" />
     <Content Include="Views\Index.html" />
     <Content Include="packages.config" />
     <None Include="Web.Debug.config">
@@ -107,8 +108,12 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\AuthLogon.cs" />
+    <Compile Include="Core\AuthRequest.cs" />
+    <Compile Include="Core\AuthValidator.cs" />
     <Compile Include="Core\WebTokenFunctions.cs" />
     <Compile Include="Extensions\NancyModuleExtensions.cs" />
+    <Compile Include="Modules\AuthModule.cs" />
     <Compile Include="Modules\HalloModule.cs" />
     <Compile Include="Modules\IndexModule.cs" />
     <Compile Include="Modules\TijdModule.cs" />

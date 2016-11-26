@@ -5,6 +5,7 @@ using System.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Web;
 
 
@@ -46,8 +47,10 @@ namespace NancyFxTutorial.Web.Core
 
       var tokenHandler = new JwtSecurityTokenHandler();
 
-      var encodedToken = tokenHandler.CreateEncodedJwt(securityTokenDescriptor);
-      return encodedToken;
+      var plainToken = tokenHandler.CreateToken(securityTokenDescriptor);
+      var signedAndEncodedToken = tokenHandler.WriteToken(plainToken);
+
+      return signedAndEncodedToken;
     }
 
     public static ClaimsPrincipal ValidateToken(string token, string issuerName, string secret)
@@ -73,6 +76,16 @@ namespace NancyFxTutorial.Web.Core
 
       var principal = tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
       return principal;
+    }
+
+    public static string CreateSecret() // Om er eentje aan te maken
+    {
+      using (var cryptoProvider = new RNGCryptoServiceProvider())
+      {
+        byte[] secretKeyByteArray = new byte[32]; // 256 bit
+        cryptoProvider.GetBytes(secretKeyByteArray);
+        return Convert.ToBase64String(secretKeyByteArray);
+      }
     }
   }
 }
