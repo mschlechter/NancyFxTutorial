@@ -20,13 +20,26 @@ namespace NancyFxTutorial.Web.Extensions
     public static void ValidateToken(this NancyModule module)
     {
       // Lees dit eens goed...
-    // http://bytefish.de/blog/token_authentication_owin_nancy/#implementing-token-authentication-with-nancy-and-owin
+      // http://bytefish.de/blog/token_authentication_owin_nancy/#implementing-token-authentication-with-nancy-and-owin
 
 
-      //module.Before += (NancyContext ctx) =>
-      //{
-      //  var x = ctx.CurrentUser;
-      //};
+      module.Before += (NancyContext ctx) =>
+      {
+        // Haal token uit de request headers
+
+
+        var ok = true;
+
+        if (!ok)
+        {
+          return new Response
+          {
+            StatusCode = HttpStatusCode.Unauthorized
+          };
+        }
+
+        return null;
+      };
     }
   }
 }
