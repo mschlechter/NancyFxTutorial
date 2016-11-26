@@ -22,7 +22,10 @@ namespace NancyFxTutorial.Web.Modules
         var logon = new AuthValidator().GetLogon(authRequest.Naam, authRequest.Wachtwoord);
         if (logon == null)
         {
-          return "";
+          return new Response {
+            StatusCode = HttpStatusCode.BadRequest,
+            ReasonPhrase = "Onbekende combinatie van gebruikersnaam en wachtwoord"
+          };
         }
 
         var identity = WebTokenFunctions.CreateClaimIdentity(logon.ID.ToString(), logon.Naam, "Gebruiker");

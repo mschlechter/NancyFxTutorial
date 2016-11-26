@@ -5,12 +5,19 @@
     wachtwoord: ""
   };
 
+  $scope.token = null;
+
   $scope.getToken = function () {
+    $scope.melding = null;
 
     $http.post("/auth/token", $scope.authRequest).then(function (response) {
-      alert(response.data);
+      $scope.token = response.data;
+    }, function (response) {
+      if (response.status === 400)
+      {
+        $scope.melding = response.statusText;
+      }
     });
-
 
   };
 
