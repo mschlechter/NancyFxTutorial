@@ -25,7 +25,7 @@ namespace NancyFxTutorial.Web.Modules
           };
         }
 
-        var identity = WebTokenFunctions.CreateClaimIdentity(logon);
+        var identity = logon.ToClaimsIdentity();
         var token = WebTokenFunctions.CreateToken(identity, AppUtils.Issuer, AppUtils.SecretApiKey);
 
         return token;

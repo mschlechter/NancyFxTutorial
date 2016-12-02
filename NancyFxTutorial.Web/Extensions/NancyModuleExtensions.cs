@@ -41,33 +41,13 @@ namespace NancyFxTutorial.Web.Extensions
       var authHeader = ctx.Request.Headers.Authorization;
       if (authHeader?.Length > 7) bearerToken = authHeader.Substring(7);
 
-
       if (!string.IsNullOrEmpty(bearerToken))
       {
         var principal = WebTokenFunctions.ValidateToken(bearerToken, AppUtils.Issuer, AppUtils.SecretApiKey);
 
-        var userId = principal.Claims
-          .Where(c => c.Type == ClaimTypes.NameIdentifier)
-          .Select(c => c.Value).SingleOrDefault();
-
-        var userName = principal.Claims
-          .Where(c => c.Type == ClaimTypes.Name)
-          .Select(c => c.Value).SingleOrDefault();
-
-        var role = principal.Claims
-          .Where(c => c.Type == ClaimTypes.Role)
-          .Select(c => c.Value).SingleOrDefault();
-
-        if (!string.IsNullOrEmpty(userId))
+        var logon = AuthLogon.CreateFromClaimsPrincipal(principal);
+        if (logon != null)
         {
-          // Maak hier een user object aan op basis van de claims en ken het toe
-          var logon = new AuthLogon
-          {
-            UserID = Int32.Parse(userId),
-            UserName = userName,
-            Role = role
-          };
-
           ctx.CurrentUser = logon;
 
           // Laat de response door
