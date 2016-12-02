@@ -19,17 +19,37 @@ namespace NancyFxTutorial.Web.Modules
       }
     }
 
-    public SecureModule(IDbConnectionService dbConnectionService)
+    public SecureModule()
     {
-      Get["/secure/hallo"] = _ =>
+      this.Before += BeforeResponse;
+    }
+
+    static Response BeforeResponse(NancyContext ctx)
+    {
+      string bearerToken = "";
+
+      // Haal token uit de request headers
+      var authHeader = ctx.Request.Headers.Authorization;
+      if (authHeader?.Length > 7) bearerToken = authHeader.Substring(7);
+
+      if (!string.IsNullOrEmpty(bearerToken))
       {
-        var x = dbConnectionService.OpenDbConnection();
-        x.Dispose();
+        var principal = WebTokenFunctions.ValidateToken(bearerToken, AppUtils.Issuer, AppUtils.SecretApiKey);
 
-        return $"Hallo {CurrentLogon.UserName}, deze url wordt beveiligd met een JSON web token";
+        var logon = AuthLogon.CreateFromClaimsPrincipal(principal);
+        if (logon != null)
+        {
+          ctx.CurrentUser = logon;
+
+          // Laat de response door
+          return null;
+        }
+      }
+
+      return new Response
+      {
+        StatusCode = HttpStatusCode.Unauthorized
       };
-
-      this.ValidateToken();
     }
   }
 }

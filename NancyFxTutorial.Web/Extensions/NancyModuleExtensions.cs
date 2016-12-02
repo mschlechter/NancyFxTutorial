@@ -19,37 +19,6 @@ namespace NancyFxTutorial.Web.Extensions
       };
     }
 
-    public static void ValidateToken(this NancyModule module)
-    {
-      module.Before += BeforeResponse;
-    }
-
-    static Response BeforeResponse(NancyContext ctx)
-    {
-      string bearerToken = "";
-
-      // Haal token uit de request headers
-      var authHeader = ctx.Request.Headers.Authorization;
-      if (authHeader?.Length > 7) bearerToken = authHeader.Substring(7);
-
-      if (!string.IsNullOrEmpty(bearerToken))
-      {
-        var principal = WebTokenFunctions.ValidateToken(bearerToken, AppUtils.Issuer, AppUtils.SecretApiKey);
-
-        var logon = AuthLogon.CreateFromClaimsPrincipal(principal);
-        if (logon != null)
-        {
-          ctx.CurrentUser = logon;
-
-          // Laat de response door
-          return null;
-        }
-      }
-
-      return new Response
-      {
-        StatusCode = HttpStatusCode.Unauthorized
-      };
-    }
+    
   }
 }

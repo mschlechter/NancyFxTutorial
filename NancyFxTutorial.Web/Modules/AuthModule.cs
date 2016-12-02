@@ -1,6 +1,7 @@
 ﻿using Nancy;
 using Nancy.ModelBinding;
 using NancyFxTutorial.Web.Core;
+using NancyFxTutorial.Web.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,16 +11,17 @@ namespace NancyFxTutorial.Web.Modules
 {
   public class AuthModule : NancyModule
   {
-    public AuthModule()
+    public AuthModule(IAuthenticationService authenticationService)
     {
       Post["/auth/token"] = _ =>
       {
         var authRequest = this.Bind<AuthRequest>();
 
-        var logon = new AuthValidator().GetLogon(authRequest.Naam, authRequest.Wachtwoord);
+        var logon = authenticationService.GetLogonByCredentials(authRequest.Naam, authRequest.Wachtwoord);
         if (logon == null)
         {
-          return new Response {
+          return new Response
+          {
             StatusCode = HttpStatusCode.BadRequest,
             ReasonPhrase = "Onbekende combinatie van gebruikersnaam en wachtwoord"
           };

@@ -129,6 +129,7 @@
     <Compile Include="Extensions\NancyModuleExtensions.cs" />
     <Compile Include="Modules\AuthModule.cs" />
     <Compile Include="Modules\HalloModule.cs" />
+    <Compile Include="Modules\HalloSecureModule.cs" />
     <Compile Include="Modules\IndexModule.cs" />
     <Compile Include="Modules\SecureModule.cs" />
     <Compile Include="Modules\TijdModule.cs" />
@@ -138,6 +139,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Services\AuthenticationService.cs" />
+    <Compile Include="Services\IAuthenticationService.cs" />
     <Compile Include="Services\IDbConnectionService.cs" />
     <Compile Include="Services\SqlConnectionService.cs" />
   </ItemGroup>
