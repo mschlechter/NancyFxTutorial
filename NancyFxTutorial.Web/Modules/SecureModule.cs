@@ -1,6 +1,7 @@
 ﻿using Nancy;
 using NancyFxTutorial.Web.Core;
 using NancyFxTutorial.Web.Extensions;
+using NancyFxTutorial.Web.Models;
 using NancyFxTutorial.Web.Services;
 using System;
 using System.Collections.Generic;
@@ -11,11 +12,11 @@ namespace NancyFxTutorial.Web.Modules
 {
   public class SecureModule : NancyModule
   {
-    public AuthLogon CurrentLogon
+    public AuthenticationLogon CurrentLogon
     {
       get
       {
-        return (AuthLogon)Context.CurrentUser;
+        return (AuthenticationLogon)Context.CurrentUser;
       }
     }
 
@@ -36,7 +37,7 @@ namespace NancyFxTutorial.Web.Modules
       {
         var principal = WebTokenFunctions.ValidateToken(bearerToken, AppUtils.Issuer, AppUtils.SecretApiKey);
 
-        var logon = AuthLogon.CreateFromClaimsPrincipal(principal);
+        var logon = AuthenticationLogon.CreateFromClaimsPrincipal(principal);
         if (logon != null)
         {
           ctx.CurrentUser = logon;

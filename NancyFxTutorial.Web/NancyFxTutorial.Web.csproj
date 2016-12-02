@@ -121,9 +121,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\AppUtils.cs" />
-    <Compile Include="Core\AuthLogon.cs" />
-    <Compile Include="Core\AuthRequest.cs" />
-    <Compile Include="Core\AuthValidator.cs" />
+    <Compile Include="Models\AuthenticationLogon.cs" />
+    <Compile Include="Models\AuthenticationRequest.cs" />
     <Compile Include="Core\WebTokenFunctions.cs" />
     <Compile Include="CustomBootstrapper.cs" />
     <Compile Include="Extensions\NancyModuleExtensions.cs" />

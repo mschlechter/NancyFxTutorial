@@ -1,4 +1,5 @@
 ﻿using NancyFxTutorial.Web.Core;
+using NancyFxTutorial.Web.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace NancyFxTutorial.Web.Services
 {
   public interface IAuthenticationService
   {
-    AuthLogon GetLogonByCredentials(string username, string password);
+    AuthenticationLogon GetLogonByCredentials(string username, string password);
   }
 }

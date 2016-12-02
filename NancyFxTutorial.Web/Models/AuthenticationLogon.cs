@@ -5,9 +5,9 @@ using System.Linq;
 using System.Security.Claims;
 using System.Web;
 
-namespace NancyFxTutorial.Web.Core
+namespace NancyFxTutorial.Web.Models
 {
-  public class AuthLogon : IUserIdentity
+  public class AuthenticationLogon : IUserIdentity
   {
     public IEnumerable<string> Claims
     {
@@ -35,7 +35,7 @@ namespace NancyFxTutorial.Web.Core
       return claimsIdentity;
     }
 
-    public static AuthLogon CreateFromClaimsPrincipal(ClaimsPrincipal principal)
+    public static AuthenticationLogon CreateFromClaimsPrincipal(ClaimsPrincipal principal)
     {
       if (principal == null) return null;
 
@@ -59,7 +59,7 @@ namespace NancyFxTutorial.Web.Core
         .Select(c => c.Value).SingleOrDefault();
 
       // Maak hier een user object aan op basis van de claims en ken het toe
-      var logon = new AuthLogon
+      var logon = new AuthenticationLogon
       {
         UserID = userIdValue,
         UserName = userName,

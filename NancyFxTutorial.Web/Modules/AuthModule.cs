@@ -1,6 +1,7 @@
 ﻿using Nancy;
 using Nancy.ModelBinding;
 using NancyFxTutorial.Web.Core;
+using NancyFxTutorial.Web.Models;
 using NancyFxTutorial.Web.Services;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace NancyFxTutorial.Web.Modules
     {
       Post["/auth/token"] = _ =>
       {
-        var authRequest = this.Bind<AuthRequest>();
+        var authRequest = this.Bind<AuthenticationRequest>();
 
         var logon = authenticationService.GetLogonByCredentials(authRequest.Naam, authRequest.Wachtwoord);
         if (logon == null)
