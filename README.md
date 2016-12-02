@@ -98,3 +98,9 @@ en valideren.
 
 De claims zijn eigenschappen van onze identiteit. We zeggen in feite "wij zijn gebruiker X".
 
+## 7. Dependency injection
+
+NancyFX heeft ingebouwde dependency injection. Dit betekent dat als er van een willekeurige
+interface maar 1 implementatie is in het project, dat deze automatisch zal worden aangemaakt
+en geinjecteerd.
+

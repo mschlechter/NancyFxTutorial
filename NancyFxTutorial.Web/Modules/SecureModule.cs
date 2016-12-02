@@ -1,6 +1,7 @@
 ﻿using Nancy;
 using NancyFxTutorial.Web.Core;
 using NancyFxTutorial.Web.Extensions;
+using NancyFxTutorial.Web.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,10 +19,11 @@ namespace NancyFxTutorial.Web.Modules
       }
     }
 
-    public SecureModule()
+    public SecureModule(IDbConnectionService dbConnectionService)
     {
       Get["/secure/hallo"] = _ =>
       {
+        var x = dbConnectionService.OpenDbConnection();
 
         return $"Hallo {CurrentLogon.UserName}, deze url wordt beveiligd met een JSON web token";
       };
