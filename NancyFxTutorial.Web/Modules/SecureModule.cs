@@ -24,6 +24,7 @@ namespace NancyFxTutorial.Web.Modules
       Get["/secure/hallo"] = _ =>
       {
         var x = dbConnectionService.OpenDbConnection();
+        x.Dispose();
 
         return $"Hallo {CurrentLogon.UserName}, deze url wordt beveiligd met een JSON web token";
       };
