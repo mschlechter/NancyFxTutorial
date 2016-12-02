@@ -113,6 +113,7 @@
     <Compile Include="Core\AuthRequest.cs" />
     <Compile Include="Core\AuthValidator.cs" />
     <Compile Include="Core\WebTokenFunctions.cs" />
+    <Compile Include="CustomBootstrapper.cs" />
     <Compile Include="Extensions\NancyModuleExtensions.cs" />
     <Compile Include="Modules\AuthModule.cs" />
     <Compile Include="Modules\HalloModule.cs" />

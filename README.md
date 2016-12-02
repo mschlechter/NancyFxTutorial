@@ -104,3 +104,6 @@ NancyFX heeft ingebouwde dependency injection. Dit betekent dat als er van een w
 interface maar 1 implementatie is in het project, dat deze automatisch zal worden aangemaakt
 en geinjecteerd.
 
+Als je hier meer controle over wil, kun je uiteraard ook een CustomBootstrapper maken waarin
+je de TinyIoCContainer exact vertelt welke implementatie van een specifieke service
+gebruikt moet worden.
