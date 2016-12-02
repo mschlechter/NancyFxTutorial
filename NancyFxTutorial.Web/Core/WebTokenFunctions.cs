@@ -13,13 +13,13 @@ namespace NancyFxTutorial.Web.Core
 {
   public class WebTokenFunctions
   {
-    public static ClaimsIdentity CreateClaimIdentity(string userId, string userName, string role)
+    public static ClaimsIdentity CreateClaimIdentity(AuthLogon logon)
     {
       var claimsIdentity = new ClaimsIdentity(new List<Claim>()
       {
-          new Claim(ClaimTypes.NameIdentifier, userId),
-          new Claim(ClaimTypes.Name, userName),
-          new Claim(ClaimTypes.Role, role)
+          new Claim(ClaimTypes.NameIdentifier, logon.UserID.ToString()),
+          new Claim(ClaimTypes.Name, logon.UserName),
+          new Claim(ClaimTypes.Role, logon.Role)
       }, "Custom");
 
       return claimsIdentity;

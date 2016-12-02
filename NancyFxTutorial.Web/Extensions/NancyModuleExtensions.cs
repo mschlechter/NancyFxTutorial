@@ -35,7 +35,6 @@ namespace NancyFxTutorial.Web.Extensions
 
     static Response BeforeResponse(NancyContext ctx)
     {
-      var validRequest = true;
       string bearerToken = "";
 
       // Haal token uit de request headers
@@ -51,23 +50,35 @@ namespace NancyFxTutorial.Web.Extensions
           .Where(c => c.Type == ClaimTypes.NameIdentifier)
           .Select(c => c.Value).SingleOrDefault();
 
+        var userName = principal.Claims
+          .Where(c => c.Type == ClaimTypes.Name)
+          .Select(c => c.Value).SingleOrDefault();
+
+        var role = principal.Claims
+          .Where(c => c.Type == ClaimTypes.Role)
+          .Select(c => c.Value).SingleOrDefault();
+
         if (!string.IsNullOrEmpty(userId))
         {
+          // Maak hier een user object aan op basis van de claims en ken het toe
+          var logon = new AuthLogon
+          {
+            UserID = Int32.Parse(userId),
+            UserName = userName,
+            Role = role
+          };
+
+          ctx.CurrentUser = logon;
+
           // Laat de response door
           return null;
-
         }
-
       }
-
-
 
       return new Response
       {
         StatusCode = HttpStatusCode.Unauthorized
       };
-
     }
-
   }
 }
