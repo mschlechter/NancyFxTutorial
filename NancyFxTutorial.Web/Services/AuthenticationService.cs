@@ -20,14 +20,13 @@ namespace NancyFxTutorial.Web.Services
 
     public AuthenticationLogon GetLogonByCredentials(string username, string password)
     {
-      using (IDbConnection dbConnection = DbConnectionService.OpenDbConnection())
-      {
-        var user = dbConnection.Query<AuthenticationLogon>(
-          "SELECT * FROM [User] WHERE Username = @Username AND Password = @Password",
-          new { Username = username, Password = password }).SingleOrDefault();
+      var dbConnection = DbConnectionService.GetDbConnection();
 
-        return user;
-      }
+      var user = dbConnection.Query<AuthenticationLogon>(
+        "SELECT * FROM [User] WHERE Username = @Username AND Password = @Password",
+        new { Username = username, Password = password }).SingleOrDefault();
+
+      return user;
     }
   }
 }

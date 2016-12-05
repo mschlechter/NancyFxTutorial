@@ -6,8 +6,8 @@ using System.Web;
 
 namespace NancyFxTutorial.Web.Services
 {
-  public interface IDbConnectionService
+  public interface IDbConnectionService : IDisposable 
   {
-    IDbConnection OpenDbConnection();
+    IDbConnection GetDbConnection();
   }
 }

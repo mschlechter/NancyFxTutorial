@@ -6,18 +6,20 @@ using System.Web;
 using Nancy.Bootstrapper;
 using Nancy.TinyIoc;
 using NancyFxTutorial.Web.Services;
+using Nancy.Hosting.Aspnet;
 
 namespace NancyFxTutorial.Web
 {
   public class CustomBootstrapper : DefaultNancyBootstrapper
   {
-    protected override void ConfigureApplicationContainer(TinyIoCContainer container)
+    protected override void ConfigureRequestContainer(TinyIoCContainer container, NancyContext context)
     {
-      base.ConfigureApplicationContainer(container);
+      base.ConfigureRequestContainer(container, context);
 
-      // Omdat er maar 1 implementatie is, is deze regel niet nodig. Maar dit is dus
-      // handig wanneer je meer dan 1 implementatie hebt en wilt kunnen kiezen.
-      container.Register<IDbConnectionService, SqlConnectionService>();
+      // Trying to get SqlConnectionService in a per request scope and let it be disposed automatically
+      container
+        .Register<IDbConnectionService, SqlConnectionService>()
+        .AsPerRequestSingleton();
     }
   }
 }
