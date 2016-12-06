@@ -18,7 +18,7 @@ namespace NancyFxTutorial.Web
     {
       base.ConfigureRequestContainer(container, context);
 
-      // De SqlConnectionService zal gedurede een gehele request bestaan
+      // De SqlConnectionService zal gedurende een gehele request bestaan
       container.Update(builder => builder
         .RegisterType<SqlConnectionService>()
         .As<IDbConnectionService>()

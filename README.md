@@ -107,3 +107,10 @@ en geinjecteerd.
 Als je hier meer controle over wil, kun je uiteraard ook een CustomBootstrapper maken waarin
 je de TinyIoCContainer exact vertelt welke implementatie van een specifieke service
 gebruikt moet worden.
+
+Nog beter is het vervangen van TinyIOC door een uitgebreidere en stabielere container. Zelf
+geef ik de voorkeur aan Autofac. Om die te kunnen gebruiken heb je de Nancy.Bootstrappers.Autofac
+NuGet package nodig.
+
+Zie de CustomBootstrapper voor een implementatie hiervan.
+
