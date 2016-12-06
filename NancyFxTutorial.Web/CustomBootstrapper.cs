@@ -7,19 +7,28 @@ using Nancy.Bootstrapper;
 using Nancy.TinyIoc;
 using NancyFxTutorial.Web.Services;
 using Nancy.Hosting.Aspnet;
+using Nancy.Bootstrappers.Autofac;
+using Autofac;
 
 namespace NancyFxTutorial.Web
 {
-  public class CustomBootstrapper : DefaultNancyBootstrapper
+  public class CustomBootstrapper : AutofacNancyBootstrapper
   {
-    protected override void ConfigureRequestContainer(TinyIoCContainer container, NancyContext context)
+    protected override void ConfigureRequestContainer(ILifetimeScope container, NancyContext context)
     {
       base.ConfigureRequestContainer(container, context);
 
-      // Trying to get SqlConnectionService in a per request scope and let it be disposed automatically
-      container
-        .Register<IDbConnectionService, SqlConnectionService>()
-        .AsPerRequestSingleton();
+      // De SqlConnectionService zal gedurede een gehele request bestaan
+      container.Update(builder => builder
+        .RegisterType<SqlConnectionService>()
+        .As<IDbConnectionService>()
+        .InstancePerRequest());
+
+      // De AuthenticationService zal worden gemaakt zodra hij nodig is
+      container.Update(builder => builder
+        .RegisterType<AuthenticationService>()
+        .As<IAuthenticationService>());
+
     }
   }
 }

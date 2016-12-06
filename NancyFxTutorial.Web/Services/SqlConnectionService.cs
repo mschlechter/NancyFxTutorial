@@ -8,25 +8,25 @@ using System.Web;
 
 namespace NancyFxTutorial.Web.Services
 {
-  // Intended use:
-  // Be able to inject SqlConnectionService using a request scope and let it
-  // be disposed when the request / response cycle is finished.
+  // De SqlConnectionService bestaat gedurende een gehele request.
+  // Hierdoor kan dezelfde SqlConnection door meerdere services gedeeld
+  // worden (uiteraard niet tegelijkertijd)
   public class SqlConnectionService : IDbConnectionService 
   {
     private IDbConnection DbConnection;
 
     public void Dispose()
     {
-      // Close existing IDbConnection. THIS IS IMPORTANT!
+      // Sluit de openstaande SQL verbinding
       DbConnection?.Dispose();
     }
 
     public IDbConnection GetDbConnection()
     {
-      // Open existing IDbConnection
+      // Geeft de bestaande SQL verbinding terug
       if (DbConnection != null) return DbConnection;
 
-      // Create new IDbConnection if we don't have one
+      // Maak een nieuwe SQL verbinding
       var mainConnectionString = ConfigurationManager.ConnectionStrings["NancyFxTutorial.Web.Properties.Settings.MainConnectionString"].ConnectionString;
 
       DbConnection = new SqlConnection(mainConnectionString);
