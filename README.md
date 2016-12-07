@@ -9,7 +9,8 @@ Inhoudsopgave:
   3. [Een eenvoudige view maken voor HTML](#3-een-eenvoudige-view-maken-voor-html)
   4. [Statische content toevoegen](#4-statische-content-toevoegen)
   5. [Het voorkomen van browser caching](#5-het-voorkomen-van-browser-caching)
-  6. [Token authentication inbouwen](#6-token-authentication-inbouwen)
+  6. [Dependency injection](#6-dependency-injection)
+  7. [Token authentication inbouwen](#7-token-authentication-inbouwen)
 
 ## 1. Een NancyFX project aanmaken
 
@@ -27,8 +28,22 @@ Maak een map met de naam Modules aan in het project en voeg een nieuwe class
 toe met de naam HalloModule.
 
 Zorg ervoor dat deze class overerft van NancyModule en dat je in de constructor
-een Get handler toevoegt. Zie hiervoor het HalloModule.cs bestand in het
-project.
+een Get handler toevoegt:
+
+```C#
+using Nancy;
+
+namespace NancyFxTutorial.Web.Modules
+{
+  public class HalloModule : NancyModule
+  {
+    public HalloModule()
+    {
+      Get["/hallo"] = parameters => "Hallo wereld";
+    }
+  }
+}
+```
 
 Zodra je nu het project uitvoert, zul je op de /hallo url een "Hallo wereld"
 melding moeten zien.
@@ -40,10 +55,25 @@ te delen waarmee we dingen kunnen testen.
 
 Hiervoor kun je in NancyFX een view maken.
 
-Maak hiervoor het IndexModule.cs bestand aan (zie voorbeeld). Voeg daarnaast een
-map Views toe aan het project. Maak in de Views map een Index.html bestand aan.
+Maak hiervoor het IndexModule.cs bestand aan:
 
-Vanaf nu zou je automatisch het Index.html bestand moeten zien zodra je het 
+```C#
+using Nancy;
+
+namespace NancyFxTutorial.Web.Modules
+{
+  public class IndexModule : NancyModule
+  {
+    public IndexModule()
+    {
+      Get["/"] = _ => View["Index"];
+    }
+  }
+}
+```
+
+Voeg daarnaast een map Views toe aan het project. Maak in de Views map een Index.html bestand 
+aan. Vanaf nu zou je automatisch het Index.html bestand moeten zien zodra je het 
 project start.
 
 ## 4. Statische content toevoegen
@@ -75,7 +105,24 @@ Je kunt hiervan een voorbeeld zien in het TijdModule.cs bestand. De werking
 hiervan kun je zien door de tijd te verversen wanneer je naar onze testpagina
 (Index.html) gaat.
 
-## 6. Token authentication inbouwen
+## 6. Dependency injection
+
+NancyFX heeft ingebouwde dependency injection. Dit betekent dat als er van een willekeurige
+interface maar 1 implementatie is in het project, dat deze automatisch zal worden aangemaakt
+en geinjecteerd.
+
+Als je hier meer controle over wil, kun je uiteraard ook een CustomBootstrapper maken waarin
+je de TinyIoCContainer exact vertelt welke implementatie van een specifieke service
+gebruikt moet worden.
+
+Nog beter is het vervangen van TinyIOC door een uitgebreidere en stabielere container. Zelf
+geef ik de voorkeur aan Autofac. Om die te kunnen gebruiken heb je de Nancy.Bootstrappers.Autofac
+NuGet package nodig.
+
+Zie de CustomBootstrapper voor een implementatie hiervan.
+
+
+## 7. Token authentication inbouwen
 
 Hiervoor heb je de volgende libraries nodig:
 
@@ -97,20 +144,4 @@ signing key. De secret key zorgt ervoor dat er maar 1 instantie is die de tokens
 en valideren.
 
 De claims zijn eigenschappen van onze identiteit. We zeggen in feite "wij zijn gebruiker X".
-
-## 7. Dependency injection
-
-NancyFX heeft ingebouwde dependency injection. Dit betekent dat als er van een willekeurige
-interface maar 1 implementatie is in het project, dat deze automatisch zal worden aangemaakt
-en geinjecteerd.
-
-Als je hier meer controle over wil, kun je uiteraard ook een CustomBootstrapper maken waarin
-je de TinyIoCContainer exact vertelt welke implementatie van een specifieke service
-gebruikt moet worden.
-
-Nog beter is het vervangen van TinyIOC door een uitgebreidere en stabielere container. Zelf
-geef ik de voorkeur aan Autofac. Om die te kunnen gebruiken heb je de Nancy.Bootstrappers.Autofac
-NuGet package nodig.
-
-Zie de CustomBootstrapper voor een implementatie hiervan.
 
