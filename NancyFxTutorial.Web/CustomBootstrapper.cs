@@ -1,14 +1,7 @@
-﻿using Nancy;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Nancy.Bootstrapper;
-using Nancy.TinyIoc;
-using NancyFxTutorial.Web.Services;
-using Nancy.Hosting.Aspnet;
+﻿using Autofac;
+using Nancy;
 using Nancy.Bootstrappers.Autofac;
-using Autofac;
+using NancyFxTutorial.Web.Services;
 
 namespace NancyFxTutorial.Web
 {
@@ -29,6 +22,7 @@ namespace NancyFxTutorial.Web
         .RegisterType<AuthenticationService>()
         .As<IAuthenticationService>());
 
+      // De LogginService zal worden gemaakt zodra hij nodig is
       container.Update(builder => builder
         .RegisterType<LoggingService>()
         .As<ILoggingService>());

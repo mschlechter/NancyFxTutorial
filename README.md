@@ -9,7 +9,7 @@ Inhoudsopgave:
   3. [Een eenvoudige view maken voor HTML](#3-een-eenvoudige-view-maken-voor-html)
   4. [Statische content toevoegen](#4-statische-content-toevoegen)
   5. [Het voorkomen van browser caching](#5-het-voorkomen-van-browser-caching)
-  6. [Dependency injection](#6-dependency-injection)
+  6. [Dependency injection met Autofac](#6-dependency-injection-met-autofac)
   7. [Token authentication inbouwen](#7-token-authentication-inbouwen)
 
 ## 1. Een NancyFX project aanmaken
@@ -80,7 +80,18 @@ project start.
 
 Maak hiervoor een Content map aan. NancyFX zal automatisch alle bestanden
 in deze map delen via de /content/ url. In dit project heb ik bijvoorbeeld
-een site.css aangemaakt die gebruikt wordt door Index.html.
+een site.css aangemaakt die gebruikt wordt door Index.html:
+
+```HTML
+<html>
+<head>
+  <link href="/Content/site.css" rel="stylesheet" />
+</head>
+<body>
+  <h1>NancyFX tutorial</h1>
+</body>
+</html>
+```
 
 ## 5. Het voorkomen van browser caching
 
@@ -93,34 +104,169 @@ Hierdoor krijg je vaak oude antwoorden te zien.
 De mooiste manier om voor een bepaalde module caching te voorkomen, is
 volgens de makers van NancyFX het gebruiken van extension methods. In dit
 voorbeeld project heb ik een map Extensions aangemaakt, met daarin een
-bestand ModuleExtensions.cs.
+bestand NancyModuleExtensions.cs:
+
+```C#
+using Nancy;
+
+namespace NancyFxTutorial.Web.Extensions
+{
+  public static partial class NancyModuleExtensions
+  {
+    public static void PreventCaching(this NancyModule module)
+    {
+      module.After += (NancyContext ctx) =>
+      {
+        ctx.Response.Headers.Add("Cache-control", "no-cache");
+        ctx.Response.Headers.Add("Pragma", "no-cache");
+      };
+    }
+  }
+}
+```
 
 Hierin heb ik een PreventCaching() functie gemaakt die een After hook van
-NancyFX gebruikt om de cache control headers toe te voegen.
+NancyFX gebruikt om de cache control headers toe te voegen. Dit betekent dat
+aan het einde van elke verwerking de headers worden toegevoegd.
 
 Het voordeel hiervan is dat ik nu in elke willekeurige NancyModule simpelweg
 this.PreventCaching() kan aanroepen.
 
-Je kunt hiervan een voorbeeld zien in het TijdModule.cs bestand. De werking
-hiervan kun je zien door de tijd te verversen wanneer je naar onze testpagina
-(Index.html) gaat.
+Je kunt hiervan een voorbeeld zien in het TijdModule.cs bestand:
 
-## 6. Dependency injection
+```C#
+using Nancy;
+using NancyFxTutorial.Web.Extensions;
+using System;
+
+namespace NancyFxTutorial.Web.Modules
+{
+  public class TijdModule : NancyModule
+  {
+    public TijdModule()
+    {
+      Get["/tijd"] = _ => DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
+
+      this.PreventCaching();
+    }
+  }
+}
+```
+
+De werking hiervan kun je zien door de tijd te verversen wanneer je naar de
+nieuwe testpagina (Index.html) van dit project gaat.
+
+## 6. Dependency injection met Autofac
 
 NancyFX heeft ingebouwde dependency injection. Dit betekent dat als er van een willekeurige
 interface maar 1 implementatie is in het project, dat deze automatisch zal worden aangemaakt
-en geinjecteerd.
+en gebruikt in de modules die deze nodig hebben.
 
 Als je hier meer controle over wil, kun je uiteraard ook een CustomBootstrapper maken waarin
 je de TinyIoCContainer exact vertelt welke implementatie van een specifieke service
 gebruikt moet worden.
 
-Nog beter is het vervangen van TinyIOC door een uitgebreidere en stabielere container. Zelf
-geef ik de voorkeur aan Autofac. Om die te kunnen gebruiken heb je de Nancy.Bootstrappers.Autofac
-NuGet package nodig.
+Nog beter is echter het vervangen van TinyIOC door een uitgebreidere en betrouwbaardere
+container. Zelf geef ik de voorkeur aan Autofac. Om Autofac te kunnen gebruiken heb je de
+Nancy.Bootstrappers.Autofac NuGet package nodig.
 
-Zie de CustomBootstrapper voor een implementatie hiervan.
+Onze CustomBootstrapper.cs ziet er dan als volgt uit:
 
+```C#
+using Autofac;
+using Nancy;
+using Nancy.Bootstrappers.Autofac;
+using NancyFxTutorial.Web.Services;
+
+namespace NancyFxTutorial.Web
+{
+  public class CustomBootstrapper : AutofacNancyBootstrapper
+  {
+    protected override void ConfigureRequestContainer(ILifetimeScope container, NancyContext context)
+    {
+      base.ConfigureRequestContainer(container, context);
+
+      // Voeg hier de registraties toe
+    }
+  }
+}
+```
+
+1 van de voordelen die Autofac ons biedt, is het aanmaken van een object met een InstancePerRequest
+scope. Dit betekent dat gedurende de request het object maar 1 keer bestaat, en wanneer dit object
+IDisposable implementeert, ook automatisch wordt opgeruimd. Dit is erg handig voor het managen van
+bijvoorbeeld database verbindingen.
+
+Dezelfde SqlConnection kan dus automatisch worden gedeeld door meerdere Services gedurende de afhandeling
+van een request, en wordt daarna automatisch weer opgeruimd. Hiervoor heb ik een SqlConnectionService.cs
+gemaakt:
+
+```C#
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+
+namespace NancyFxTutorial.Web.Services
+{
+  // De SqlConnectionService bestaat gedurende een gehele request.
+  // Hierdoor kan dezelfde SqlConnection door meerdere services gedeeld
+  // worden (uiteraard niet tegelijkertijd)
+  public class SqlConnectionService : IDbConnectionService 
+  {
+    private IDbConnection DbConnection;
+
+    public void Dispose()
+    {
+      // Sluit de openstaande SQL verbinding
+      DbConnection?.Dispose();
+    }
+
+    public IDbConnection GetDbConnection()
+    {
+      // Geeft de bestaande SQL verbinding terug
+      if (DbConnection != null) return DbConnection;
+
+      // Maak een nieuwe SQL verbinding
+      var mainConnectionString = ConfigurationManager.ConnectionStrings["NancyFxTutorial.Web.Properties.Settings.MainConnectionString"].ConnectionString;
+
+      DbConnection = new SqlConnection(mainConnectionString);
+      DbConnection.Open();
+
+      return DbConnection;
+    }
+  }
+}
+```
+
+De interface is eenvoudig:
+
+```C#
+using System;
+using System.Data;
+
+namespace NancyFxTutorial.Web.Services
+{
+  public interface IDbConnectionService : IDisposable 
+  {
+    IDbConnection GetDbConnection();
+  }
+}
+```
+
+Wel moeten we deze Service netjes registreren als InstancePerRequest in de CustomBootstrapper:
+
+```C#
+// De SqlConnectionService zal gedurende een gehele request bestaan
+container.Update(builder => builder
+  .RegisterType<SqlConnectionService>()
+  .As<IDbConnectionService>()
+  .InstancePerRequest());
+```
+
+Wanneer we nu een Service maken die IDbConnectionService nodig heeft, dan kan deze gewoon
+GetDbConnection() aanroepen om een SqlConnection te krijgen. Andere services die voor
+dezelfde request nodig zijn, kunnen deze SqlConnection dus hergebruiken en zodra de
+request is afgehandeld, wordt de verbinding weer automatisch gesloten.
 
 ## 7. Token authentication inbouwen
 
