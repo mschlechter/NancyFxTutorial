@@ -29,6 +29,9 @@ namespace NancyFxTutorial.Web
         .RegisterType<AuthenticationService>()
         .As<IAuthenticationService>());
 
+      container.Update(builder => builder
+        .RegisterType<LoggingService>()
+        .As<ILoggingService>());
     }
   }
 }
