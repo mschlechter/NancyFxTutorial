@@ -268,6 +268,78 @@ GetDbConnection() aanroepen om een SqlConnection te krijgen. Andere services die
 dezelfde request nodig zijn, kunnen deze SqlConnection dus hergebruiken en zodra de
 request is afgehandeld, wordt de verbinding weer automatisch gesloten.
 
+Als we nu een LoggingService willen maken die een IDbConnection nodig heeft, gaat dat
+eenvoudig:
+
+ILoggingService interface:
+```C#
+namespace NancyFxTutorial.Web.Services
+{
+  public interface ILoggingService
+  {
+    void LogMessage(string message);
+  }
+}
+```
+
+LoggingService implementatie:
+```C#
+namespace NancyFxTutorial.Web.Services
+{
+  public class LoggingService : ILoggingService
+  {
+    IDbConnectionService DbConnectionService;
+
+    public LoggingService(IDbConnectionService dbConnectionService)
+    {
+      this.DbConnectionService = dbConnectionService;
+    }
+
+    public void LogMessage(string message)
+    {
+      var dbConnection = DbConnectionService.GetDbConnection();
+
+      // Voeg hier code toe die de IDbConnection nodig heeft
+    }
+  }
+}
+```
+
+Registratie met Autofac in onze CustomBootstrapper:
+```C#
+// De LogginService zal worden gemaakt zodra hij nodig is
+container.Update(builder => builder
+  .RegisterType<LoggingService>()
+  .As<ILoggingService>());
+```
+
+We kunnen nu in elke willekeurige NancyModule de service injecten:
+
+```C#
+using Nancy;
+using NancyFxTutorial.Web.Services;
+
+namespace NancyFxTutorial.Web.Modules
+{
+  public class TestModule : NancyModule
+  {
+    public AuthModule(ILoggingService loggingService)
+    {
+      // ILoggingService zal automatisch voor je worden aangemaakt en kun je dus hier gebruiken
+    }
+  }
+}
+```
+
+Het grote voordeel van dependency injection is dat je een duidelijke scheiding van 
+verantwoordelijkheden krijgt en dat je bovendien meer flexibiliteit wint. Als je bijvoorbeeld
+graag naar een bestand wil loggen in plaats van de database, dan zou je eenvoudig een andere
+implementatie van ILoggingService kunnen maken die naar een bestand schrijft en dan in de
+CustomBootstrapper de registratie aanpassen.
+
+Vanaf dat moment logt het hele project naar een bestand in plaats van de database, zonder
+dat je veel hoeft aan te passen in de code.
+
 ## 7. Token authentication inbouwen
 
 Hiervoor heb je de volgende libraries nodig:

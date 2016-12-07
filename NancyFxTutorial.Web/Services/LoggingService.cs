@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace NancyFxTutorial.Web.Services
+﻿namespace NancyFxTutorial.Web.Services
 {
   public class LoggingService : ILoggingService
   {
@@ -18,7 +13,7 @@ namespace NancyFxTutorial.Web.Services
     {
       var dbConnection = DbConnectionService.GetDbConnection();
 
-
+      // Voeg hier code toe die de IDbConnection nodig heeft
     }
   }
 }
