@@ -377,10 +377,24 @@ Sinds versie 5.0 heeft System.IdentityModel.Tokens.Jwt als dependency
 Microsoft.IdentityModel.Tokens en dus niet meer de System.IdentityModel.Tokens 
 library.
 
-In de WebTokenFunctions class heb ik de volgende functies gemaakt:
+Voor het werken met JSON Web Tokens zijn 2 functies van belang:
+1. Het aanmaken van een token (CreateToken)
+2. Het controleren van een token (ValidateToken)
 
-public static string CreateToken(ClaimsIdentity claimsIdentity, string issuerName, string secret)
-public static ClaimsPrincipal ValidateToken(string token, string issuerName, string secret)
+Deze functies brengen we onder in een IWebTokenService interface:
+
+```C#
+using System.Security.Claims;
+
+namespace NancyFxTutorial.Web.Services
+{
+  public interface IWebTokenService
+  {
+    string CreateToken(ClaimsIdentity claimsIdentity);
+    ClaimsPrincipal ValidateToken(string token);
+  }
+}
+```
 
 Het idee is dat we een JSON Web Token maken op basis van bepaalde claims en een secret
 signing key. De secret key zorgt ervoor dat er maar 1 instantie is die de tokens kan maken
@@ -388,3 +402,119 @@ en valideren.
 
 De claims zijn eigenschappen van onze identiteit. We zeggen in feite "wij zijn gebruiker X".
 
+Omdat we een issuerName en een secret key nodig hebben voor onze service, maken we hier
+parameters van in de constructor. Tevens heb ik deze eigenschappen als settings in het
+project opgenomen, zodat ze automatisch in de web.config terecht komen.
+
+Onze WebTokenService ziet er dan als volgt uit:
+
+```C#
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+
+namespace NancyFxTutorial.Web.Services
+{
+  public class WebTokenService : IWebTokenService
+  {
+    private string Issuer;
+    private byte[] Secret;
+
+    public WebTokenService(string issuer, string secret)
+    {
+      this.Issuer = issuer;
+      this.Secret = Convert.FromBase64String(secret);
+    }
+
+    public string CreateToken(ClaimsIdentity claimsIdentity)
+    {
+      var signingKey = new SymmetricSecurityKey(Secret);
+      var signingCredentials = new SigningCredentials(signingKey,
+          SecurityAlgorithms.HmacSha256Signature);
+
+      var securityTokenDescriptor = new SecurityTokenDescriptor()
+      {
+        Issuer = this.Issuer,
+        Subject = claimsIdentity,
+        SigningCredentials = signingCredentials,
+        Expires = DateTime.Now.AddMinutes(15)
+      }; // Token is 15 minuten geldig
+
+      var tokenHandler = new JwtSecurityTokenHandler();
+
+      var plainToken = tokenHandler.CreateToken(securityTokenDescriptor);
+      var signedAndEncodedToken = tokenHandler.WriteToken(plainToken);
+
+      return signedAndEncodedToken;
+    }
+
+    public ClaimsPrincipal ValidateToken(string token)
+    {
+      var validationParameters = new TokenValidationParameters()
+      {
+        IssuerSigningKey = new SymmetricSecurityKey(Secret),
+        ValidIssuer = this.Issuer,
+        ValidateLifetime = true,
+        ValidateAudience = false,
+        ValidateIssuer = true,
+        ValidateIssuerSigningKey = true
+      };
+
+      var tokenHandler = new JwtSecurityTokenHandler();
+      SecurityToken validatedToken = null;
+
+      var principal = tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
+      return principal;
+    }
+  }
+}
+```
+
+De registratie hiervan gaat als volgt:
+
+```C#
+using Autofac;
+using Nancy;
+using Nancy.Bootstrappers.Autofac;
+using NancyFxTutorial.Web.Services;
+
+namespace NancyFxTutorial.Web
+{
+  public class CustomBootstrapper : AutofacNancyBootstrapper
+  {
+    protected override void ConfigureRequestContainer(ILifetimeScope container, NancyContext context)
+    {
+      base.ConfigureRequestContainer(container, context);
+
+      // Configuratie ophalen uit web.config
+      var mainConnectionString = Properties.Settings.Default.MainConnectionString;
+
+      var secretApiKey = Properties.Settings.Default.SecretApiKey;
+      var issuerName = Properties.Settings.Default.IssuerName;
+
+      // Services registreren bij Autofac
+      container.Update(builder =>
+      {
+        // SqlConnectionService registreren die gedurende een gehele request zal bestaan
+        builder.Register(ctx => new SqlConnectionService(mainConnectionString))
+          .As<IDbConnectionService>()
+          .InstancePerRequest();
+
+        // Registreer de WebTokenService
+        builder.Register(ctx => new WebTokenService(issuerName, secretApiKey)).As<IWebTokenService>();
+
+        // Registreer de AuthenticationService
+        builder.RegisterType<AuthenticationService>().As<IAuthenticationService>();
+
+        // Registreer de LoggingService
+        builder.RegisterType<LoggingService>().As<ILoggingService>();
+      });
+    }
+  }
+}
+```
+
+
+
+**Hier wordt nog aan gewerkt**
