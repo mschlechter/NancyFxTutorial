@@ -10,7 +10,7 @@ Inhoudsopgave:
   4. [Statische content toevoegen](#4-statische-content-toevoegen)
   5. [Het voorkomen van browser caching](#5-het-voorkomen-van-browser-caching)
   6. [Dependency injection met Autofac](#6-dependency-injection-met-autofac)
-  7. [Token authentication inbouwen](#7-token-authentication-inbouwen)
+  7. [WebToken authentication inbouwen](#7-webtoken-authentication-inbouwen)
 
 ## 1. Een NancyFX project aanmaken
 
@@ -363,23 +363,20 @@ CustomBootstrapper de registratie aanpassen.
 Vanaf dat moment logt het hele project naar een bestand in plaats van de database, zonder
 dat je veel hoeft aan te passen in de code.
 
-## 7. Token authentication inbouwen
-
-**Hier wordt nog aan gewerkt**
+## 7. WebToken authentication inbouwen
 
 Hiervoor heb je de volgende libraries nodig:
 
-Microsoft.IdentityModel.Tokens (NuGet package)
-System.IdentityModel.Tokens.Jwt (NuGet package)
+  - Microsoft.IdentityModel.Tokens (NuGet package)
+  - System.IdentityModel.Tokens.Jwt (NuGet package)
 
 **Let op:**
 Sinds versie 5.0 heeft System.IdentityModel.Tokens.Jwt als dependency
-Microsoft.IdentityModel.Tokens en dus niet meer de System.IdentityModel.Tokens 
-library.
+Microsoft.IdentityModel.Tokens en dus niet meer de System.IdentityModel.Tokens library.
 
 Voor het werken met JSON Web Tokens zijn 2 functies van belang:
-1. Het aanmaken van een token (CreateToken)
-2. Het controleren van een token (ValidateToken)
+  1. Het aanmaken van een token (CreateToken)
+  2. Het controleren van een token (ValidateToken)
 
 Deze functies brengen we onder in een IWebTokenService interface:
 
@@ -471,48 +468,14 @@ namespace NancyFxTutorial.Web.Services
 }
 ```
 
-De registratie hiervan gaat als volgt:
+De registratie van de WebTokenService in de CustomBootstrapper gaat als volgt:
 
 ```C#
-using Autofac;
-using Nancy;
-using Nancy.Bootstrappers.Autofac;
-using NancyFxTutorial.Web.Services;
+var secretApiKey = Properties.Settings.Default.SecretApiKey;
+var issuerName = Properties.Settings.Default.IssuerName;
 
-namespace NancyFxTutorial.Web
-{
-  public class CustomBootstrapper : AutofacNancyBootstrapper
-  {
-    protected override void ConfigureRequestContainer(ILifetimeScope container, NancyContext context)
-    {
-      base.ConfigureRequestContainer(container, context);
-
-      // Configuratie ophalen uit web.config
-      var mainConnectionString = Properties.Settings.Default.MainConnectionString;
-
-      var secretApiKey = Properties.Settings.Default.SecretApiKey;
-      var issuerName = Properties.Settings.Default.IssuerName;
-
-      // Services registreren bij Autofac
-      container.Update(builder =>
-      {
-        // SqlConnectionService registreren die gedurende een gehele request zal bestaan
-        builder.Register(ctx => new SqlConnectionService(mainConnectionString))
-          .As<IDbConnectionService>()
-          .InstancePerRequest();
-
-        // Registreer de WebTokenService
-        builder.Register(ctx => new WebTokenService(issuerName, secretApiKey)).As<IWebTokenService>();
-
-        // Registreer de AuthenticationService
-        builder.RegisterType<AuthenticationService>().As<IAuthenticationService>();
-
-        // Registreer de LoggingService
-        builder.RegisterType<LoggingService>().As<ILoggingService>();
-      });
-    }
-  }
-}
+// Registreer de WebTokenService
+builder.Register(ctx => new WebTokenService(issuerName, secretApiKey)).As<IWebTokenService>();
 ```
 
 
