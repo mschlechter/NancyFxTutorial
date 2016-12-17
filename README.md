@@ -480,4 +480,4 @@ builder.Register(ctx => new WebTokenService(issuerName, secretApiKey)).As<IWebTo
 
 
 
-**Hier wordt nog aan gewerkt**
+**Aan dit document wordt nog gewerkt! De code in het project werkt overigens al wel.**
