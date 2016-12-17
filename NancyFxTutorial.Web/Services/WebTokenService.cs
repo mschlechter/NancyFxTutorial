@@ -1,33 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Web;
-
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
+using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Cryptography;
-
+using System.Security.Claims;
 
 namespace NancyFxTutorial.Web.Services
 {
   public class WebTokenService : IWebTokenService
   {
     private string Issuer;
-    private string Secret;
+    private byte[] Secret;
 
     public WebTokenService(string issuer, string secret)
     {
       this.Issuer = issuer;
-      this.Secret = secret;
+      this.Secret = Convert.FromBase64String(secret);
     }
 
     public string CreateToken(ClaimsIdentity claimsIdentity)
     {
-      byte[] secretBytes = Convert.FromBase64String(Secret);
-
-      var signingKey = new SymmetricSecurityKey(secretBytes);
+      var signingKey = new SymmetricSecurityKey(Secret);
       var signingCredentials = new SigningCredentials(signingKey,
           SecurityAlgorithms.HmacSha256Signature);
 
@@ -49,11 +40,9 @@ namespace NancyFxTutorial.Web.Services
 
     public ClaimsPrincipal ValidateToken(string token)
     {
-      byte[] secretBytes = Convert.FromBase64String(Secret);
-
       var validationParameters = new TokenValidationParameters()
       {
-        IssuerSigningKey = new SymmetricSecurityKey(secretBytes),
+        IssuerSigningKey = new SymmetricSecurityKey(Secret),
         ValidIssuer = this.Issuer,
         ValidateLifetime = true,
         ValidateAudience = false,
