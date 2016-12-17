@@ -202,7 +202,6 @@ van een request, en wordt daarna automatisch weer opgeruimd. Hiervoor heb ik een
 gemaakt:
 
 ```C#
-using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -214,6 +213,12 @@ namespace NancyFxTutorial.Web.Services
   public class SqlConnectionService : IDbConnectionService 
   {
     private IDbConnection DbConnection;
+    private string ConnectionString;
+
+    public SqlConnectionService(string connectionString)
+    {
+      this.ConnectionString = connectionString;
+    }
 
     public void Dispose()
     {
@@ -227,9 +232,7 @@ namespace NancyFxTutorial.Web.Services
       if (DbConnection != null) return DbConnection;
 
       // Maak een nieuwe SQL verbinding
-      var mainConnectionString = ConfigurationManager.ConnectionStrings["NancyFxTutorial.Web.Properties.Settings.MainConnectionString"].ConnectionString;
-
-      DbConnection = new SqlConnection(mainConnectionString);
+      DbConnection = new SqlConnection(ConnectionString);
       DbConnection.Open();
 
       return DbConnection;
@@ -256,11 +259,33 @@ namespace NancyFxTutorial.Web.Services
 Wel moeten we deze Service netjes registreren als InstancePerRequest in de CustomBootstrapper:
 
 ```C#
-// De SqlConnectionService zal gedurende een gehele request bestaan
-container.Update(builder => builder
-  .RegisterType<SqlConnectionService>()
-  .As<IDbConnectionService>()
-  .InstancePerRequest());
+using Autofac;
+using Nancy;
+using Nancy.Bootstrappers.Autofac;
+using NancyFxTutorial.Web.Services;
+
+namespace NancyFxTutorial.Web
+{
+  public class CustomBootstrapper : AutofacNancyBootstrapper
+  {
+    protected override void ConfigureRequestContainer(ILifetimeScope container, NancyContext context)
+    {
+      base.ConfigureRequestContainer(container, context);
+
+      // Configuratie ophalen uit web.config
+      var mainConnectionString = Properties.Settings.Default.MainConnectionString;
+
+      // Services registreren bij Autofac
+      container.Update(builder =>
+      {
+        // SqlConnectionService registreren die gedurende een gehele request zal bestaan
+        builder.Register(ctx => new SqlConnectionService(mainConnectionString))
+          .As<IDbConnectionService>()
+          .InstancePerRequest();
+      });
+    }
+  }
+}
 ```
 
 Wanneer we nu een Service maken die IDbConnectionService nodig heeft, dan kan deze gewoon
@@ -307,10 +332,8 @@ namespace NancyFxTutorial.Web.Services
 
 Registratie met Autofac in onze CustomBootstrapper:
 ```C#
-// De LogginService zal worden gemaakt zodra hij nodig is
-container.Update(builder => builder
-  .RegisterType<LoggingService>()
-  .As<ILoggingService>());
+// Registreer de LoggingService
+builder.RegisterType<LoggingService>().As<ILoggingService>();
 ```
 
 We kunnen nu in elke willekeurige NancyModule de service injecten:
@@ -341,6 +364,8 @@ Vanaf dat moment logt het hele project naar een bestand in plaats van de databas
 dat je veel hoeft aan te passen in de code.
 
 ## 7. Token authentication inbouwen
+
+**Hier wordt nog aan gewerkt**
 
 Hiervoor heb je de volgende libraries nodig:
 

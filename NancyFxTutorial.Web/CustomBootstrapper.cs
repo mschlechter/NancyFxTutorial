@@ -1,9 +1,7 @@
 ﻿using Autofac;
 using Nancy;
 using Nancy.Bootstrappers.Autofac;
-using NancyFxTutorial.Web.Core;
 using NancyFxTutorial.Web.Services;
-using System.Configuration;
 
 namespace NancyFxTutorial.Web
 {
