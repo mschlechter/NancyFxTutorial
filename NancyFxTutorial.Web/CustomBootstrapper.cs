@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Nancy;
 using Nancy.Bootstrappers.Autofac;
+using NancyFxTutorial.Web.Core;
 using NancyFxTutorial.Web.Services;
 using System.Configuration;
 
@@ -21,6 +22,13 @@ namespace NancyFxTutorial.Web
         })
         .As<IDbConnectionService>()
         .InstancePerRequest());
+
+      // Registreer de WebTokenService
+      container.Update(builder => builder
+        .Register(ctx => {
+          return new WebTokenService(AppUtils.Issuer, AppUtils.SecretApiKey);
+        })
+        .As<IWebTokenService>());
 
       // De AuthenticationService zal worden gemaakt zodra hij nodig is
       container.Update(builder => builder

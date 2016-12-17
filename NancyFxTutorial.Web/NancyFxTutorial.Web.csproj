@@ -150,8 +150,10 @@
     <Compile Include="Services\IAuthenticationService.cs" />
     <Compile Include="Services\IDbConnectionService.cs" />
     <Compile Include="Services\ILoggingService.cs" />
+    <Compile Include="Services\IWebTokenService.cs" />
     <Compile Include="Services\LoggingService.cs" />
     <Compile Include="Services\SqlConnectionService.cs" />
+    <Compile Include="Services\WebTokenService.cs" />
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup>

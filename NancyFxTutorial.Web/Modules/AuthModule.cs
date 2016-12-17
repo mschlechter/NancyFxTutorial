@@ -8,7 +8,10 @@ namespace NancyFxTutorial.Web.Modules
 {
   public class AuthModule : NancyModule
   {
-    public AuthModule(IAuthenticationService authenticationService, ILoggingService loggingService)
+    public AuthModule(
+      IAuthenticationService authenticationService, 
+      IWebTokenService webTokenService,
+      ILoggingService loggingService)
     {
       Post["/auth/token"] = _ =>
       {
@@ -29,7 +32,7 @@ namespace NancyFxTutorial.Web.Modules
         loggingService.LogMessage("Inloggen gelukt");
 
         var identity = logon.ToClaimsIdentity();
-        var token = WebTokenFunctions.CreateToken(identity, AppUtils.Issuer, AppUtils.SecretApiKey);
+        var token = webTokenService.CreateToken(identity);
 
         return token;
       };

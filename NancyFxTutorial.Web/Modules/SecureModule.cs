@@ -12,6 +12,8 @@ namespace NancyFxTutorial.Web.Modules
 {
   public class SecureModule : NancyModule
   {
+    private IWebTokenService WebTokenService;
+
     public AuthenticationLogon CurrentLogon
     {
       get
@@ -20,12 +22,13 @@ namespace NancyFxTutorial.Web.Modules
       }
     }
 
-    public SecureModule()
+    public SecureModule(IWebTokenService webTokenService)
     {
+      this.WebTokenService = webTokenService;
       this.Before += BeforeResponse;
     }
 
-    static Response BeforeResponse(NancyContext ctx)
+    private Response BeforeResponse(NancyContext ctx)
     {
       string bearerToken = "";
 
@@ -35,7 +38,7 @@ namespace NancyFxTutorial.Web.Modules
 
       if (!string.IsNullOrEmpty(bearerToken))
       {
-        var principal = WebTokenFunctions.ValidateToken(bearerToken, AppUtils.Issuer, AppUtils.SecretApiKey);
+        var principal = WebTokenService.ValidateToken(bearerToken);
 
         var logon = AuthenticationLogon.CreateFromClaimsPrincipal(principal);
         if (logon != null)

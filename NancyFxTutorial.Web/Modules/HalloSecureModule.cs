@@ -8,13 +8,12 @@ namespace NancyFxTutorial.Web.Modules
 {
   public class HalloSecureModule : SecureModule
   {
-    public HalloSecureModule() : base()
+    public HalloSecureModule(IWebTokenService webTokenService) : base(webTokenService)
     {
       Get["/secure/hallo"] = _ =>
       {
         return $"Hallo {CurrentLogon.UserName}, deze url wordt beveiligd met een JSON web token";
       };
-
     }
   }
 }
