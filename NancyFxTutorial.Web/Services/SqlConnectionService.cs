@@ -10,6 +10,12 @@ namespace NancyFxTutorial.Web.Services
   public class SqlConnectionService : IDbConnectionService 
   {
     private IDbConnection DbConnection;
+    private string ConnectionString;
+
+    public SqlConnectionService(string connectionString)
+    {
+      this.ConnectionString = connectionString;
+    }
 
     public void Dispose()
     {
@@ -23,9 +29,7 @@ namespace NancyFxTutorial.Web.Services
       if (DbConnection != null) return DbConnection;
 
       // Maak een nieuwe SQL verbinding
-      var mainConnectionString = ConfigurationManager.ConnectionStrings["NancyFxTutorial.Web.Properties.Settings.MainConnectionString"].ConnectionString;
-
-      DbConnection = new SqlConnection(mainConnectionString);
+      DbConnection = new SqlConnection(ConnectionString);
       DbConnection.Open();
 
       return DbConnection;

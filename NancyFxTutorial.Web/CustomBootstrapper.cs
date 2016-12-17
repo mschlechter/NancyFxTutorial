@@ -2,6 +2,7 @@
 using Nancy;
 using Nancy.Bootstrappers.Autofac;
 using NancyFxTutorial.Web.Services;
+using System.Configuration;
 
 namespace NancyFxTutorial.Web
 {
@@ -11,9 +12,13 @@ namespace NancyFxTutorial.Web
     {
       base.ConfigureRequestContainer(container, context);
 
+      var mainConnectionString = ConfigurationManager.ConnectionStrings["NancyFxTutorial.Web.Properties.Settings.MainConnectionString"].ConnectionString;
+
       // De SqlConnectionService zal gedurende een gehele request bestaan
       container.Update(builder => builder
-        .RegisterType<SqlConnectionService>()
+        .Register(ctx => {
+          return new SqlConnectionService(mainConnectionString);
+        })
         .As<IDbConnectionService>()
         .InstancePerRequest());
 
