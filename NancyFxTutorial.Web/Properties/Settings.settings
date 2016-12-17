@@ -9,5 +9,11 @@
 &lt;/SerializableConnectionString&gt;</DesignTimeValue>
       <Value Profile="(Default)">Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\TutorialDb.mdf;Integrated Security=True</Value>
     </Setting>
+    <Setting Name="SecretApiKey" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">+a8tTwAuErCTfvPYtGeaS/dMJmxx9IlbmlOt8QnHAqY=</Value>
+    </Setting>
+    <Setting Name="IssuerName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">NancyFxTutorial</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

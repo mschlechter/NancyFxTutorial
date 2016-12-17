@@ -13,9 +13,13 @@ namespace NancyFxTutorial.Web
     {
       base.ConfigureRequestContainer(container, context);
 
-      var mainConnectionString = ConfigurationManager.ConnectionStrings["NancyFxTutorial.Web.Properties.Settings.MainConnectionString"].ConnectionString;
+      // Configuratie ophalen uit web.config
+      var mainConnectionString = Properties.Settings.Default.MainConnectionString;
 
-      // De SqlConnectionService zal gedurende een gehele request bestaan
+      var secretApiKey = Properties.Settings.Default.SecretApiKey;
+      var issuerName = Properties.Settings.Default.IssuerName;
+
+      // SqlConnectionService registreren die gedurende een gehele request zal bestaan
       container.Update(builder => builder
         .Register(ctx => {
           return new SqlConnectionService(mainConnectionString);
@@ -26,16 +30,16 @@ namespace NancyFxTutorial.Web
       // Registreer de WebTokenService
       container.Update(builder => builder
         .Register(ctx => {
-          return new WebTokenService(AppUtils.Issuer, AppUtils.SecretApiKey);
+          return new WebTokenService(issuerName, secretApiKey);
         })
         .As<IWebTokenService>());
 
-      // De AuthenticationService zal worden gemaakt zodra hij nodig is
+      // Registreer de AuthenticationService
       container.Update(builder => builder
         .RegisterType<AuthenticationService>()
         .As<IAuthenticationService>());
 
-      // De LogginService zal worden gemaakt zodra hij nodig is
+      // Registreer de LoggingService
       container.Update(builder => builder
         .RegisterType<LoggingService>()
         .As<ILoggingService>());

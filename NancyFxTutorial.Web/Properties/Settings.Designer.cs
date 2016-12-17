@@ -33,5 +33,23 @@ namespace NancyFxTutorial.Web.Properties {
                 return ((string)(this["MainConnectionString"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("+a8tTwAuErCTfvPYtGeaS/dMJmxx9IlbmlOt8QnHAqY=")]
+        public string SecretApiKey {
+            get {
+                return ((string)(this["SecretApiKey"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("NancyFxTutorial")]
+        public string IssuerName {
+            get {
+                return ((string)(this["IssuerName"]));
+            }
+        }
     }
 }
