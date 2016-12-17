@@ -19,30 +19,28 @@ namespace NancyFxTutorial.Web
       var secretApiKey = Properties.Settings.Default.SecretApiKey;
       var issuerName = Properties.Settings.Default.IssuerName;
 
-      // SqlConnectionService registreren die gedurende een gehele request zal bestaan
-      container.Update(builder => builder
-        .Register(ctx => {
-          return new SqlConnectionService(mainConnectionString);
-        })
-        .As<IDbConnectionService>()
-        .InstancePerRequest());
+      // Services registreren bij Autofac
+      container.Update(builder =>
+      {
+        // SqlConnectionService registreren die gedurende een gehele request zal bestaan
+        builder
+          .Register(ctx => { return new SqlConnectionService(mainConnectionString); })
+          .As<IDbConnectionService>()
+          .InstancePerRequest();
 
-      // Registreer de WebTokenService
-      container.Update(builder => builder
-        .Register(ctx => {
-          return new WebTokenService(issuerName, secretApiKey);
-        })
-        .As<IWebTokenService>());
+        // Registreer de WebTokenService
+        builder
+          .Register(ctx => { return new WebTokenService(issuerName, secretApiKey); })
+          .As<IWebTokenService>();
 
-      // Registreer de AuthenticationService
-      container.Update(builder => builder
-        .RegisterType<AuthenticationService>()
-        .As<IAuthenticationService>());
+        // Registreer de AuthenticationService
+        builder.RegisterType<AuthenticationService>().As<IAuthenticationService>();
 
-      // Registreer de LoggingService
-      container.Update(builder => builder
-        .RegisterType<LoggingService>()
-        .As<ILoggingService>());
+        // Registreer de LoggingService
+        builder.RegisterType<LoggingService>().As<ILoggingService>();
+      });
+
+      
     }
   }
 }
