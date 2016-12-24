@@ -111,7 +111,7 @@ kunnen we het bestand direct gebruiken in de view.
 
 Een vervelend probleem dat zich voor kan doen wanneer je met een JavaScript
 framework een API aanroept, is dat het antwoord door de browser in de cache
-wordt bewaard.
+wordt bewaard. Vooral Internet Explorer doet dat heel graag.
 
 Hierdoor krijg je vaak oude antwoorden te zien.
 
@@ -168,7 +168,7 @@ namespace NancyFxTutorial.Web.Modules
 ```
 
 De werking hiervan kun je zien door de tijd te verversen wanneer je naar de
-nieuwe testpagina (Index.html) van dit project gaat.
+testpagina (Index.html) van dit project gaat.
 
 ## 6. Dependency injection met Autofac
 
