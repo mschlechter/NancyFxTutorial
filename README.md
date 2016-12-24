@@ -54,10 +54,11 @@ een "Hallo wereld" melding moeten zien.
 
 ## 3. Een eenvoudige view maken voor HTML
 
-Om van ons testproject een basis website te maken, is het handig om een Index.html
+Om van ons testproject een echte web applicatie te maken, is het handig om een Index.html
 te delen waarmee we dingen kunnen testen. Hiervoor kun je in NancyFX een view maken.
 
-Maak hiervoor het IndexModule.cs bestand aan:
+Voordat we de view zelf aanmaken, is het handig om eerst een module te maken die de view
+teruggeeft. Maak hiervoor het IndexModule.cs bestand aan:
 
 ```C#
 using Nancy;
@@ -74,15 +75,23 @@ namespace NancyFxTutorial.Web.Modules
 }
 ```
 
-Voeg daarnaast een map Views toe aan het project. Maak in de Views map een Index.html bestand 
-aan. Vanaf nu zou je automatisch het Index.html bestand moeten zien zodra je het 
-project start.
+Voeg daarna een map Views toe aan het project. Maak in de Views map een Index.html bestand 
+aan. Als het goed is, zou je nu wanneer je het project opstart, automatisch het Index.html
+bestand moeten zien in de browser.
+
+Zoals je ziet, kan een NancyModule als API werken, maar dus ook views teruggeven. Er is dus
+niet een scheiding, zoals die bestaat tussen ASP.NET MVC en ASP.NET Web API. Overigens heeft
+Microsoft in ASP.NET Core dit ook opgelost en gebruiken ze nu dezelfde controllers voor 
+alles.
 
 ## 4. Statische content toevoegen
 
-Maak hiervoor een Content map aan. NancyFX zal automatisch alle bestanden
-in deze map delen via de /content/ url. In dit project heb ik bijvoorbeeld
-een site.css aangemaakt die gebruikt wordt door Index.html:
+Het is altijd handig om in een web applicaties over statische content te kunnen beschikken.
+Te denken valt hierbij aan CSS stylesheets, plaatjes enzovoorts.
+
+Maak hiervoor een Content map aan. NancyFX zal automatisch alle bestanden in deze map delen
+via de /content/ url. In dit project heb ik bijvoorbeeld een site.css aangemaakt die 
+gebruikt wordt door Index.html:
 
 ```HTML
 <html>
@@ -94,6 +103,9 @@ een site.css aangemaakt die gebruikt wordt door Index.html:
 </body>
 </html>
 ```
+
+Omdat het site.css bestand dus in de Content map staat, en NancyFX deze map automatisch deelt,
+kunnen we het bestand direct gebruiken in de view.
 
 ## 5. Het voorkomen van browser caching
 
