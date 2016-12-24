@@ -19,16 +19,20 @@ aan te maken en dan de volgende libraries via NuGet toe te voegen:
 - Nancy
 - Nancy.Hosting.Aspnet
 
-Dit zorgt ervoor dat onze nieuwe NancyFX modules die we gaan maken, automatisch
-gevonden worden en direct gaan werken.
+De Nancy.Hosting.Aspnet library zorgt ervoor dat de NancyFX handler wordt geregistreerd
+in ons nieuwe web project. Hierdoor zullen de NancyFX modules die we gaan maken, 
+automatisch gevonden worden en direct gaan werken.
 
 ## 2. Een NancyFX module maken
 
-Maak een map met de naam Modules aan in het project en voeg een nieuwe class
-toe met de naam HalloModule.
+Een NancyFX module kun je zien als een soort handler of controller. Code voor het
+afhandelen van HTTP requests horen dus in een module.
+
+Voor het aanmaken van onze eerste module, maak je een map met de naam Modules aan in
+het project en voeg je een nieuwe class toe met de naam HalloModule.
 
 Zorg ervoor dat deze class overerft van NancyModule en dat je in de constructor
-een Get handler toevoegt:
+een Get handler toevoegt die als tekst "Hallo wereld" teruggeeft:
 
 ```C#
 using Nancy;
@@ -45,15 +49,13 @@ namespace NancyFxTutorial.Web.Modules
 }
 ```
 
-Zodra je nu het project uitvoert, zul je op de /hallo url een "Hallo wereld"
-melding moeten zien.
+Zodra je nu het project uitvoert, en met een browser naar de /hallo url gaat, zou je
+een "Hallo wereld" melding moeten zien.
 
 ## 3. Een eenvoudige view maken voor HTML
 
 Om van ons testproject een basis website te maken, is het handig om een Index.html
-te delen waarmee we dingen kunnen testen.
-
-Hiervoor kun je in NancyFX een view maken.
+te delen waarmee we dingen kunnen testen. Hiervoor kun je in NancyFX een view maken.
 
 Maak hiervoor het IndexModule.cs bestand aan:
 
