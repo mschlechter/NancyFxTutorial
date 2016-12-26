@@ -176,15 +176,16 @@ NancyFX heeft ingebouwde dependency injection. Dit betekent dat als er van een w
 interface maar 1 implementatie is in het project, dat deze automatisch zal worden aangemaakt
 en gebruikt in de modules die deze nodig hebben.
 
-Als je hier meer controle over wil, kun je uiteraard ook een CustomBootstrapper maken waarin
-je de TinyIoCContainer exact vertelt welke implementatie van een specifieke service
-gebruikt moet worden.
+Hiervoor wordt by default TinyIOC gebruikt.
 
-Nog beter is echter het vervangen van TinyIOC door een uitgebreidere en betrouwbaardere
-container. Zelf geef ik de voorkeur aan Autofac. Om Autofac te kunnen gebruiken heb je de
-Nancy.Bootstrappers.Autofac NuGet package nodig.
+Beter is echter het vervangen van TinyIOC door een uitgebreidere en betrouwbaardere
+container. Zelf geef ik de voorkeur aan Autofac. 1 van de voordelen is bijvoorbeeld dat
+je meer controle krijgt over de levensduur van de objecten (lifetime management).
 
-Onze CustomBootstrapper.cs ziet er dan als volgt uit:
+Om Autofac te kunnen gebruiken heb je de Nancy.Bootstrappers.Autofac NuGet package nodig.
+
+Het configureren van Autofac kun je met een CustomBootstrapper. Een bootstrapper voor Autofac
+ziet er als volgt uit:
 
 ```C#
 using Autofac;
@@ -206,10 +207,10 @@ namespace NancyFxTutorial.Web
 }
 ```
 
-1 van de voordelen die Autofac ons biedt, is het aanmaken van een object met een InstancePerRequest
-scope. Dit betekent dat gedurende de request het object maar 1 keer bestaat, en wanneer dit object
-IDisposable implementeert, ook automatisch wordt opgeruimd. Dit is erg handig voor het managen van
-bijvoorbeeld database verbindingen.
+Met Autofac kunnen we eenvoudig objecten aanmaken met een InstancePerRequest scope. Dit betekent dat
+gedurende de request het object maar 1 keer bestaat, en wanneer dit object IDisposable implementeert,
+het ook automatisch wordt opgeruimd. Dit is erg handig voor het managen van bijvoorbeeld database
+verbindingen.
 
 Dezelfde SqlConnection kan dus automatisch worden gedeeld door meerdere Services gedurende de afhandeling
 van een request, en wordt daarna automatisch weer opgeruimd. Hiervoor heb ik een SqlConnectionService.cs
@@ -350,7 +351,7 @@ Registratie met Autofac in onze CustomBootstrapper:
 builder.RegisterType<LoggingService>().As<ILoggingService>();
 ```
 
-We kunnen nu in elke willekeurige NancyModule de service injecten:
+Ook kunnen we nu in elke willekeurige NancyModule de service injecten:
 
 ```C#
 using Nancy;
